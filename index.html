@@ -3,9 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>MARS — Algoritmika Eklentisi (Demo: "mars crack")</title>
+<title>MARS — Algoritmika Eklentisi</title>
 <style>
-  /* Reset + temel */
   *{box-sizing:border-box;margin:0;padding:0}
   :root{
     --bg1:#040816; --bg2:#001428; --accent1:#ff6b6b; --accent2:#7c5cff; --glass:rgba(255,255,255,0.05);
@@ -14,29 +13,26 @@
   html,body{height:100%}
   body{font-family:Inter,Segoe UI,Roboto,Arial; background:radial-gradient(1200px 600px at 10% 10%, rgba(124,92,255,0.08), transparent), linear-gradient(180deg,var(--bg1),var(--bg2)); color:#e6eef8; -webkit-font-smoothing:antialiased; overflow-x:hidden}
 
-  /* Particles arkaplan */
   #bgcanvas{position:fixed;inset:0;z-index:0}
 
   header{position:relative;z-index:5;padding:28px 6vw;display:flex;align-items:center;justify-content:space-between}
   .brand{display:flex;gap:14px;align-items:center}
-  .logo{width:56px;height:56px;border-radius:12px;background:conic-gradient(from 120deg,var(--accent2),#ff9f6b,var(--accent1));display:flex;align-items:center;justify-content:center;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+  .logo{width:56px;height:56px;border-radius:12px;background:conic-gradient(from 120deg,var(--accent2),#ff9f6b,var(--accent1));display:flex;align-items:center;justify-content:center;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.6); position:relative;}
   .logo small{font-weight:700;color:#08121b}
+  .planet-icon{position:absolute;width:28px;height:28px;top:14px;left:14px;border-radius:50%;background:linear-gradient(45deg,#ff6b6b,#7c5cff);box-shadow:0 0 12px rgba(255,255,255,0.6);}
+
   nav{display:flex;gap:12px}
   nav button{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:10px 14px;border-radius:10px;color:inherit;cursor:pointer;backdrop-filter:blur(6px)}
 
   main{min-height:78vh;display:grid;grid-template-columns:420px 1fr;gap:36px;padding:6vh 6vw;position:relative;z-index:2;align-items:center}
 
-  /* SOL - Özellikler Card */
   .info-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:20px;border-radius:18px;border:1px solid rgba(255,255,255,0.03);backdrop-filter:blur(8px);box-shadow:0 12px 40px rgba(47,18,84,0.25);display:flex;flex-direction:column;gap:14px;align-self:start}
-  .badge{display:inline-grid;place-items:center;width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,var(--accent2),var(--accent1));font-weight:700;color:#04102a}
-  .feature-title{display:flex;gap:12px;align-items:center}
-  .feature-list{margin-top:8px;display:flex;flex-direction:column;gap:10px}
+  .feature-title{display:flex;gap:12px;align-items:center;margin-bottom:16px;font-weight:700;font-size:18px}
+  .feature-list{display:flex;flex-direction:column;gap:14px}
   .feature{display:flex;gap:12px;align-items:flex-start}
   .feature svg{width:28px;height:28px;flex-shrink:0}
   .feature strong{display:block}
-  .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.02);font-size:12px}
 
-  /* Sağ - Hero */
   .hero{padding:8px 2vw}
   h1{font-size:clamp(30px,6vw,56px);line-height:1.02}
   .subtitle{margin-top:10px;color:#cfe6ff;opacity:.95}
@@ -45,262 +41,66 @@
   .btn:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(0,0,0,.6)}
   .btn.primary{background:linear-gradient(90deg,var(--accent2),var(--accent1));color:#071022;border:0}
 
-  /* mini card inside hero */
-  .mini{margin-top:16px;display:inline-block;padding:12px;border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03)}
-
-  /* Admin modal */
-  .modal-backdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:9}
-  .modal-backdrop.show{display:flex;background:linear-gradient(180deg, rgba(2,6,23,0.6), rgba(2,6,23,0.55))}
-  .modal{width:460px;background:linear-gradient(180deg,#07102a,#041025);padding:18px;border-radius:14px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 20px 60px rgba(0,0,0,.6)}
-  .modal input{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;margin-top:12px}
-  .modal .hint{font-size:13px;color:#94b7ff;margin-top:8px}
-
-  /* Admin panel mock */
-  .admin-area{position:fixed;right:22px;bottom:22px;width:420px;z-index:7}
-  .admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .panel{background:var(--card);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)}
-
-  /* sparkle animation */
   .sparkle{display:inline-block;transform-origin:center;animation:spark 2s linear infinite}
   @keyframes spark{0%{transform:translateY(0) rotate(0)}50%{transform:translateY(-6px) rotate(12deg)}100%{transform:translateY(0) rotate(0)}}
 
-  /* hover glow for feature */
-  .feature:hover{transform:translateX(6px);transition:transform .18s}
-
-  @media(max-width:980px){main{grid-template-columns:1fr;gap:18px;padding:5vh 5vw} .admin-area{display:none}}
+  @media(max-width:980px){main{grid-template-columns:1fr;gap:18px;padding:5vh 5vw}}
 </style>
 </head>
 <body>
 <canvas id="bgcanvas"></canvas>
 <header>
   <div class="brand">
-    <div class="logo"><small>M</small></div>
+    <div class="logo">
+      <small>M</small>
+      <div class="planet-icon"></div>
+    </div>
     <div>
       <div style="font-weight:700">MARS</div>
-      <div style="font-size:13px;color:#9fbff4">Algoritmika Eklentisi — Demo</div>
+      <div style="font-size:13px;color:#9fbff4">Algoritmika Eklentisi — Close Tarafından Yapılmıştır</div>
     </div>
   </div>
   <nav>
-    <button id="openAdminBtn">Admin Girişi</button>
     <button id="downloadBtn" class="primary">İndir</button>
   </nav>
 </header>
-
 <main>
-  <!-- SOL: Özellikler şimdi solda, daha gösterişli -->
-  <aside class="info-card" aria-labelledby="featuresTitle">
-    <div style="display:flex;gap:12px;align-items:center;justify-content:space-between">
-      <div style="display:flex;gap:12px;align-items:center">
-        <div class="badge">MA</div>
-        <div>
-          <div id="featuresTitle" style="font-weight:700;font-size:18px">Özellikler</div>
-          <div style="font-size:13px;color:#9fbff4;opacity:.95">MARS ("crack" adı demo amaçlı)</div>
-        </div>
-      </div>
-      <div class="pill">v0.9-demo</div>
-    </div>
-
-    <div class="feature-list" aria-hidden="false">
+  <aside class="info-card">
+    <div class="feature-title">Özellikler</div>
+    <div class="feature-list">
       <div class="feature">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2v6" stroke="#7C5CFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 8l7 14 7-14" stroke="#FF6B6B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <div>
-          <strong>Gösterişli Animasyonlar</strong>
-          <div style="font-size:13px;color:#bcd7ff;opacity:.95">Başlangıç animasyonları, partiküller ve hafif parallax.</div>
-        </div>
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="#7C5CFF" stroke-width="2"/></svg>
+        <div><strong>Anında Cevap Bulma</strong></div>
       </div>
-
       <div class="feature">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="18" height="14" rx="2" stroke="#7C5CFF" stroke-width="1.6"/><path d="M3 17h18v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2z" stroke="#FF6B6B" stroke-width="1.6"/></svg>
-        <div>
-          <strong>Admin Panel (Key ile)</strong>
-          <div style="font-size:13px;color:#bcd7ff;opacity:.95">İstemci demo: sunucu tarafı doğrulama önerilir. (Demo key: <code style="background:#001425;padding:2px 6px;border-radius:6px">gfds</code>)</div>
-        </div>
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="18" height="18" rx="4" stroke="#FF6B6B" stroke-width="2"/></svg>
+        <div><strong>Veri Gizliliği</strong></div>
       </div>
-
       <div class="feature">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l3 7h7l-5.5 4 2 7L12 17l-6.5 3 2-7L2 9h7z" stroke="#FFD66B" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></svg>
-        <div>
-          <strong>Responsive & Tek Dosya</strong>
-          <div style="font-size:13px;color:#bcd7ff;opacity:.95">Kolay dağıtım için tek `index.html` dosyası. Sunucu entegrasyonu opsiyonel.</div>
-        </div>
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12h16" stroke="#FFD66B" stroke-width="2" stroke-linecap="round"/></svg>
+        <div><strong>Hızlı Kurulum</strong></div>
       </div>
-
-      <div class="feature">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="3" stroke="#7C5CFF" stroke-width="1.6"/><path d="M19.4 15a7.9 7.9 0 0 0 .6-3 7.9 7.9 0 0 0-.6-3" stroke="#FF6B6B" stroke-width="1.6" stroke-linecap="round"/></svg>
-        <div>
-          <strong>Güvenlik Notu</strong>
-          <div style="font-size:13px;color:#bcd7ff;opacity:.95">İstemci anahtarı kolayca görülebilir — gerçek doğrulama sunucuda yapılmalı.</div>
-        </div>
-      </div>
-    </div>
-
-    <div style="margin-top:12px;display:flex;gap:8px;align-items:center;justify-content:space-between">
-      <div style="font-size:13px;color:#9fbff4">Daha fazla özellik eklenebilir</div>
-      <button class="btn" id="exportSpec">Spec İndir</button>
     </div>
   </aside>
-
-  <!-- SAĞ: Hero -->
   <section class="hero">
-    <h1>MARS <span class="sparkle">crack</span> — Algoritmika Eklentisi</h1>
-    <p class="subtitle">"Mars crack" adı sadece demo başlığıdır. Bu sayfa, eklentin için gösterişli bir arayüz ve yönetim deneyimi sunar.</p>
-
+    <h1>MARS — Algoritmika Eklentisi</h1>
+    <p class="subtitle">hızlı ve güvenli kullanım.</p>
     <div class="cta">
-      <button class="btn primary" id="demoInstall">Hızlı Kurulum</button>
-      <button class="btn" id="learnMore">Nasıl Çalışır?</button>
+      <button class="btn primary" id="demoInstall">Indir</button>
     </div>
-
-    <div class="mini">Admin anahtar (demo): <strong style="margin-left:8px;background:#001421;padding:4px 8px;border-radius:6px">gfds</strong></div>
-
-    <div style="margin-top:18px;color:#bcd7ff;font-size:14px">Canlı demo arayüzü: butonlar etkileşimli, admin modalı anahtar ile açılır. Üretimde JWT/2FA önerilir.</div>
   </section>
 </main>
-
-<!-- Admin modal -->
-<div id="modal" class="modal-backdrop" role="dialog" aria-hidden="true">
-  <div class="modal" role="document">
-    <h3>Yönetici Girişi</h3>
-    <p class="hint">Lütfen admin anahtarınızı girin. (Demo anahtar: <strong>gfds</strong>)</p>
-    <input id="adminkey" placeholder="Anahtarınızı girin..." />
-    <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
-      <button class="btn" id="cancelModal">İptal</button>
-      <button class="btn primary" id="submitKey">Giriş</button>
-    </div>
-    <div id="modalMsg" style="margin-top:10px;color:#ffb4b4"></div>
-  </div>
-</div>
-
-<!-- Admin area (demo) -->
-<div id="adminArea" class="admin-area"> 
-  <div class="admin-grid" id="adminPanel" style="display:none">
-    <div class="panel"><strong>Yönetici Paneli (Demo)</strong>
-      <div style="font-size:13px;color:#bcd7ff;margin-top:8px">Durum: <span id="statusText">Bağlı değil</span></div>
-    </div>
-    <div class="panel">
-      <div style="font-weight:600">Hızlı Kontroller</div>
-      <div style="margin-top:8px;display:flex;gap:8px">
-        <button class="btn" id="toggleMock">Mock Deployment</button>
-        <button class="btn" id="viewLogs">Logları Gör</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<footer style="padding:36px 6vw;color:#9fbff4;opacity:.9">© MARS Algoritmika — Demo. Gerçek dosya indirmeleri içermez. Üretimde: sunucu tarafı doğrulaması kullanın.</footer>
-
+<footer style="padding:36px 6vw;color:#9fbff4;opacity:.9">© MARSCRACK — Close Tarafından Yapılmıştır</footer>
 <script>
-// -----------------------------
-// Partikül arkaplan (basit canvas) — fazla özelleştirilmiş glow efektli
-// -----------------------------
 const canvas = document.getElementById('bgcanvas');
 const ctx = canvas.getContext('2d');
 let w=canvas.width=innerWidth, h=canvas.height=innerHeight; 
 window.addEventListener('resize', ()=>{w=canvas.width=innerWidth;h=canvas.height=innerHeight});
-
-class Particle{constructor(){this.reset()}
- reset(){this.x=Math.random()*w;this.y=Math.random()*h;this.vx=(Math.random()-0.5)*0.7;this.vy=(Math.random()-0.5)*0.9;this.r=0.6+Math.random()*2.8;this.alpha=0.12+Math.random()*0.6;this.hue=230+Math.random()*60}
- update(){this.x+=this.vx;this.y+=this.vy; if(this.x<-10||this.x>w+10||this.y<-10||this.y>h+10) this.reset()}
- draw(ctx){ctx.beginPath();const g = ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.r*6);g.addColorStop(0, `hsla(${this.hue},90%,68%,${this.alpha})`);g.addColorStop(1, `hsla(${this.hue},90%,68%,0)`);ctx.fillStyle=g;ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fill()}
-}
-let parts=[]; for(let i=0;i<220;i++) parts.push(new Particle());
-function loop(){ctx.clearRect(0,0,w,h); for(let p of parts){p.update();p.draw(ctx)} requestAnimationFrame(loop)}
-loop();
-
-// -----------------------------
-// Modal & Admin demo logic (istemci tarafı - öğrenme amaçlı)
-// -----------------------------
-const modal = document.getElementById('modal');
-const openAdminBtn = document.getElementById('openAdminBtn');
-const cancelModal = document.getElementById('cancelModal');
-const submitKey = document.getElementById('submitKey');
-const adminkey = document.getElementById('adminkey');
-const modalMsg = document.getElementById('modalMsg');
-const adminPanel = document.getElementById('adminPanel');
-const statusText = document.getElementById('statusText');
-
-// demo anahtarı (kullanıcının verdiği):
-const DEMO_KEY = 'gfds';
-
-openAdminBtn.addEventListener('click', ()=>{modal.classList.add('show');modal.setAttribute('aria-hidden','false');adminkey.focus();modalMsg.textContent=''});
-cancelModal.addEventListener('click', ()=>{modal.classList.remove('show');modal.setAttribute('aria-hidden','true');});
-
-submitKey.addEventListener('click', ()=>{const val=adminkey.value.trim(); if(!val){modalMsg.textContent='Anahtarı girin.';return;} if(val===DEMO_KEY){
-    modalMsg.style.color='#9fffb4'; modalMsg.textContent='Anahtar doğrulandı! Yönetici paneli açılıyor...';
-    setTimeout(()=>{modal.classList.remove('show');document.getElementById('adminPanel').style.display='grid';statusText.textContent='Yetkili olarak bağlı';},700);
-  } else {modalMsg.style.color='#ffb4b4'; modalMsg.textContent='Anahtar geçersiz.'}
-});
-
-// Admin butonları demo
-const toggleMock = document.getElementById('toggleMock');
-const viewLogs = document.getElementById('viewLogs');
-let mockOn=false;
-toggleMock.addEventListener('click', ()=>{mockOn=!mockOn; toggleMock.textContent = mockOn? 'Mock: AKTİF' : 'Mock Deployment';});
-viewLogs.addEventListener('click', ()=>{alert('Demo logları:
-- 2025-09-18 19:10: Demo başlatıldı
-- 2025-09-18 19:11: Admin giriş başarılı (demo)');});
-
-// İndir butonu (demo) — gerçekten indirmez; örnek davranış gösterir
+class Particle{constructor(){this.reset()} reset(){this.x=Math.random()*w;this.y=Math.random()*h;this.vx=(Math.random()-0.5)*0.7;this.vy=(Math.random()-0.5)*0.9;this.r=0.6+Math.random()*2.8;this.alpha=0.12+Math.random()*0.6;this.hue=230+Math.random()*60} update(){this.x+=this.vx;this.y+=this.vy; if(this.x<-10||this.x>w+10||this.y<-10||this.y>h+10) this.reset()} draw(ctx){ctx.beginPath();const g = ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.r*6);g.addColorStop(0, `hsla(${this.hue},90%,68%,${this.alpha})`);g.addColorStop(1, `hsla(${this.hue},90%,68%,0)`);ctx.fillStyle=g;ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fill()}}
+let parts=[]; for(let i=0;i<220;i++) parts.push(new Particle()); function loop(){ctx.clearRect(0,0,w,h); for(let p of parts){p.update();p.draw(ctx)} requestAnimationFrame(loop)} loop();
 const downloadBtn = document.getElementById('downloadBtn');
-downloadBtn.addEventListener('click', ()=>{alert('Demo: gerçek dosya indirmesi yok. Üretimde gerçek dosya sunucudan/authorized endpointten verilmeli.')});
-
-document.getElementById('demoInstall').addEventListener('click', ()=>{alert('Demo kurulum başlatıldı — arayüz demodur. Gerçek kurulum talimatları eklenecektir.')});
-
-document.getElementById('learnMore').addEventListener('click', ()=>{window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})});
-
-document.getElementById('exportSpec').addEventListener('click', ()=>{alert('Spec indiriliyor (demo)...');});
-
+downloadBtn.addEventListener('click', ()=>{alert('Kurulum başlatılıyor...')});
+document.getElementById('demoInstall').addEventListener('click', ()=>{alert('Kurulum başlatıldı!')});
 </script>
-
-<!--
-  NOTLAR ve Sunucu Örneği (Aşağıdaki Node/Express kodunu üretim için kullanın).
-  Bu bölüm sadece açıklama amaçlıdır — istemci tarafı anahtar doğrulaması güvenli değildir.
-
-  --- server.js (örnek) ---
-
-  // Node.js + Express minimal örnek
-  // 1) `npm init -y` -> `npm i express helmet dotenv`
-  // 2) index.html dosyanızı /public içine koyun
-
-  const express = require('express');
-  const path = require('path');
-  const helmet = require('helmet');
-  require('dotenv').config();
-
-  const app = express();
-  app.use(helmet());
-  app.use(express.json());
-  app.use(express.static(path.join(__dirname,'public')));
-
-  // Anahtarların sunucuda saklanması (örnek: .env veya DB)
-  const ADMIN_KEY = process.env.ADMIN_KEY || 'gfds';
-
-  // Admin doğrulama endpoint'i
-  app.post('/api/admin/auth', (req,res)=>{
-    const { key } = req.body;
-    if(!key) return res.status(400).json({ok:false,msg:'Key required'});
-    if(key === ADMIN_KEY){
-      // production: issue a short-lived JWT, record session, rate-limit, audit log, 2FA, etc.
-      return res.json({ok:true, token:'FAKE-JWT-FOR-DEMO'});
-    }
-    return res.status(401).json({ok:false,msg:'Unauthorized'});
-  });
-
-  // Korumalı "indir" endpoint — sadece doğrulanmış token ile
-  app.get('/api/download/:file', (req,res)=>{
-    // production: verify jwt, check permissions, stream file from protected storage
-    res.status(403).json({ok:false,msg:'Protected — demo'});
-  });
-
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, ()=>console.log('Server running on',PORT));
-
-  -----------------------------
-  Güvenlik ipuçları:
-  - Anahtarları çevresel değişkende veya güvenli DB'de saklayın.
-  - Admin doğrulaması sunucuda yapılmalı, istemci tarafına asla gerçek anahtar konulmamalı.
-  - Oturumlar için kısa ömürlü JWT'ler ve 2FA kullanın.
-  - İndirme işlemleri için doğrudan dosya linki vermeyin; token doğrulamasıyla stream edin.
--->
-
 </body>
 </html>
